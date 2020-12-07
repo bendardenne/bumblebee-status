@@ -37,7 +37,7 @@ class Module(bumblebee.engine.Module):
         for line in lines:
             info = line.split(':')
             try:
-                if info[1] == "vpn":
+                if info[1] == "tun":
                     self._vpn_profiles.append(info[0])
             except:
                 pass
@@ -52,7 +52,7 @@ class Module(bumblebee.engine.Module):
             self._connected_vpn_profile = None
             for line in lines:
                 info = line.split(':')
-                if info[1] == "vpn" and info[2] != "":
+                if info[1] == "tun" and info[2] != "":
                     self._connected_vpn_profile = info[0]
 
         except Exception as e:
@@ -95,4 +95,4 @@ class Module(bumblebee.engine.Module):
         menu.show(widget)
 
     def state(self, widget):
-        return []
+        return "off" if self._connected_vpn_profile is None else "on"

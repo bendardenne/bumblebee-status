@@ -31,7 +31,7 @@ def execute(cmd, wait=True):
     logging.info("executing command '{}'".format(cmd))
     args = shlex.split(cmd)
     my_env = os.environ.copy()
-    my_env['LC_ALL'] = "C"
+    my_env['LC_ALL'] = "C.UTF-8"
     proc = subprocess.Popen(args, env=my_env, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     rv = None
 

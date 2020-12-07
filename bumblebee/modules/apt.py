@@ -71,7 +71,7 @@ class Module(bumblebee.engine.Module):
             cnt += widget.get(t, 0)
         if cnt > 50:
             ret = "critical"
-        elif cnt > 0:
+        elif cnt > 10:
             ret = "warning"
         if widget.get("error"):
             ret = "critical"

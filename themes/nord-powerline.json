@@ -64,6 +64,47 @@
             "fg": "#A3BE8C",
             "bg": "#2E3440"
         }
+    },
+    "redshift": {
+        "enabled": {
+            "fg": "#2E3440",
+            "bg": "#8FBCBB"
+        },
+        "disabled": {
+            "fg": "#2E3440",
+            "bg": "#BF616A"
+        }
+    },
+    "gpmdp": {
+        "playing": {
+            "fg": "#2E3440",
+            "bg": "#A3BE8C"
+        },
+        "paused": {
+            "fg": "#2E3440",
+            "bg": "#EBCB8B"
+        }
+    },
+    "vpn": {
+        "on": {
+          "fg": "#2E3440",
+          "bg": "#A3BE8C"
+        }
+    },
+    "medor": {
+        "on": {
+          "fg": "#2E3440",
+          "bg": "#8FBCBB"
+        },
+        "off": {
+          "fg": "#2E3440",
+          "bg": "#BF616A"
+        }
+    },
+    "discord": {
+        "on": {
+          "fg": "#2E3440",
+          "bg": "#A3BE8C"
+        }
     }
-
 }

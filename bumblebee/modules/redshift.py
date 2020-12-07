@@ -30,7 +30,7 @@ def is_terminated():
     return False
 
 
-def get_redshift_value(widget, location, lat, lon):
+def get_redshift_value(widget):
     while True:
         if is_terminated():
             return
@@ -43,67 +43,24 @@ def get_redshift_value(widget, location, lat, lon):
             break
         widget.get("condition").release()
 
-        command = ["redshift", "-p", "-l"]
-        if location == "manual":
-            command.append(lat + ":" + lon)
-        else:
-            command.append("geoclue2")
-
-        try:
-            res = bumblebee.util.execute(" ".join(command))
-        except Exception:
-            res = ""
-            widget.set("temp", "n/a")
-            widget.set("transition", None)
-            widget.set("state", "day")
-        for line in res.split("\n"):
-            line = line.lower()
-            if "temperature" in line:
-                widget.set("temp", line.split(" ")[2])
-            if "period" in line:
-                state = line.split(" ")[1]
-                if "day" in state:
-                    widget.set("state", "day")
-                elif "night" in state:
-                    widget.set("state", "night")
-                else:
-                    widget.set("state", "transition")
-                    widget.set("transition", " ".join(line.split(" ")[2:]))
-
+        with open("/tmp/redshift") as res:
+            for line in res:
+                line = line.strip()
+                if "Status" in line:
+                    widget.set("status", line.split(" ")[1].lower())
+                if "Color temperature" in line:
+                    widget.set("temp", line.split(" ")[2])
 
 class Module(bumblebee.engine.Module):
     def __init__(self, engine, config):
         widget = bumblebee.output.Widget(full_text=self.text)
         super(Module, self).__init__(engine, config, widget)
 
-        self._location = self.parameter("location", "geoclue2")
-        self._lat = self.parameter("lat", None)
-        self._lon = self.parameter("lon", None)
-
-        # Even if location method is set to manual, if we have no lat or lon,
-        # fall back to the geoclue2 method.
-        if self._location == "manual" and (self._lat is None
-                                           or self._lon is None):
-            self._location == "geoclue2"
-
-        if self._location == "ipinfo":
-            try:
-                location_url = "http://ipinfo.io/json"
-                location = requests.get(location_url).json()
-                self._lat, self._lon = location["loc"].split(",")
-                self._lat = str(float(self._lat))
-                self._lon = str(float(self._lon))
-                self._location = "manual"
-            except Exception:
-                # Fall back to geoclue2.
-                self._location = "geoclue2"
-
         self._text = ""
         self._condition = threading.Condition()
         widget.set("condition", self._condition)
         self._thread = threading.Thread(target=get_redshift_value,
-                                        args=(widget, self._location,
-                                              self._lat, self._lon))
+                                        args=[widget])
         self._thread.start()
         self._condition.acquire()
         self._condition.notify()
@@ -120,10 +77,12 @@ class Module(bumblebee.engine.Module):
         temp = widget.get("temp", "n/a")
         self._text = temp
         transition = widget.get("transition", None)
-        if transition:
-            self._text = "{} {}".format(temp, transition)
+        #if transition:
+            #self._text = "{} {}".format(temp, transition)
+            #self._text = "{}".format(temp)
+
 
     def state(self, widget):
-        return widget.get("state", None)
+        return [widget.get("status", None), widget.get("period", None)]
 
 # vim: tabstop=8 expandtab shiftwidth=4 softtabstop=4

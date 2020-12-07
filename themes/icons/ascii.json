@@ -245,7 +245,11 @@
     },
     "transition": {
       "prefix": "trans"
+    },
+    "disabled": {
+      "prefix": "disabled"
     }
+
   },
   "docker_ps": {
     "prefix": "containers"
